@@ -18,5 +18,11 @@ from SSD300VGG16.test.test_DBox import *
 
 from SSD300VGG16.test.test_Decoder import *
 
-test_Decoder()
-test_DecoderDryrun()
+# test_Decoder()
+# test_DecoderDryrun()
+
+############################## SSD300VGG16 Detector ##############################
+
+from SSD300VGG16.test.test_Detector import *
+
+test_detectorDryrun()

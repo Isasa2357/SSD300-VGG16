@@ -38,4 +38,3 @@ class Decoder(nn.Module):
         # 結合
         bboxes = torch.stack([cx, cy, w, h], dim=2)  # (N, num_boxes, 4)
         return bboxes
-
