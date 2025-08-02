@@ -147,6 +147,15 @@ class FeatureExtractor_VGG16(nn.Module):
         # print(source6.shape)
 
         return source1, source2, source3, source4, source5, source6
+    
+    def forward_printshape(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+        sources = self.forward(x)
+
+        print(f'Feature Extractor VGG16')
+        for i in range(len(sources)):
+            print(f'source{i} shape: {sources[i].shape}')
+
+        return sources
 
 class LocHead(nn.Module):
     '''
@@ -171,6 +180,14 @@ class LocHead(nn.Module):
             loc = loc.view(loc.size(0), -1, 4)
             locs.append(loc)
         return torch.cat(locs, dim=1)
+    
+    def forward_printshape(self, sources: Tuple[torch.Tensor, ...]) -> torch.Tensor:
+        locs = self.forward(sources)
+
+        print(f'Loc Head shape: {locs.shape}')
+        
+        return locs
+
 
 class ConfHead(nn.Module):
     def __init__(self, num_classes: int, num_boxes: List[int], source_channels: List[int]):
@@ -192,6 +209,13 @@ class ConfHead(nn.Module):
             conf = conf.view(x.size(0), -1, self._num_classes)
             confs.append(conf)
         return torch.cat(confs, dim=1)
+    
+    def forward_printshape(self, sources: Tuple[torch.Tensor, ...]) -> torch.Tensor:
+        confs = self.forward(sources)
+
+        print(f'Loc Head shape: {confs.shape}')
+        
+        return confs
 
 class SSD300_VGG16(nn.Module):
     '''
@@ -200,7 +224,7 @@ class SSD300_VGG16(nn.Module):
     input (3, 300, 300)
     '''
 
-    def __init__(self, num_classes: int, num_boxes: List[int]):
+    def __init__(self, num_classes: int, num_boxes: List[int]=[4, 6, 6, 6, 4, 4]):
         super().__init__()
 
         self._num_classes = num_classes
@@ -215,5 +239,17 @@ class SSD300_VGG16(nn.Module):
 
         locs = self._lhead.forward(sources)
         confs = self._chead.forward(sources)
+
+        return locs, confs
+    
+    def forward_printshape(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+        sources = self._fe.forward_printshape(x)
+
+        locs = self._lhead.forward_printshape(sources)
+        confs = self._chead.forward_printshape(sources)
+
+        print('SSD300 VGG16')
+        print(f'locs shape: {locs.shape}')
+        print(f'confs shape: {confs.shape}')
 
         return locs, confs
