@@ -25,4 +25,8 @@ from SSD300VGG16.test.test_Decoder import *
 
 from SSD300VGG16.test.test_Detector import *
 
-test_detectorDryrun()
+# test_detectorDryrun()
+# test_Detector()
+
+
+
